@@ -1,0 +1,21 @@
+services:
+  crawl4ai:
+    image: unclecode/crawl4ai:latest
+    container_name: crawl4ai
+    restart: always
+    ports:
+      - "11235:11235"
+    environment:
+      - CRAWL4AI_API_TOKEN=${CRAWL4AI_API_TOKEN:-}
+    volumes:
+      - data:/root/.crawl4ai
+    networks:
+      - network
+    shm_size: 1gb
+
+volumes:
+  data:
+
+networks:
+  network:
+    driver: bridge
