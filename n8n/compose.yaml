@@ -11,6 +11,7 @@ services:
       - N8N_PROTOCOL=${N8N_PROTOCOL:-http}
       - WEBHOOK_URL=${N8N_WEBHOOK_URL:-http://localhost:5678/}
       - GENERIC_TIMEZONE=${GENERIC_TIMEZONE:-Asia/Shanghai}
+      - N8N_USER_MANAGEMENT_DISABLED=true
       - TZ=${TZ:-Asia/Shanghai}
     volumes:
       - data:/home/node/.n8n
