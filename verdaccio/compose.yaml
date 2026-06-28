@@ -1,0 +1,46 @@
+name: teea
+
+services:
+  verdaccio:
+    image: verdaccio/verdaccio:latest
+    container_name: verdaccio
+    pull_policy: always
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-Asia/Shanghai}
+    volumes:
+      - data:/verdaccio/storage
+      - ./conf/config.yaml:/verdaccio/conf/config.yaml:ro
+    networks:
+      - proxy
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - node -e "fetch('http://127.0.0.1:4873/-/ping').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: ${LOG_MAX_SIZE:-10m}
+        max-file: "${LOG_MAX_FILE:-3}"
+    deploy:
+      resources:
+        limits:
+          cpus: "${VERDACCIO_CPU_LIMIT:-1.00}"
+          memory: ${VERDACCIO_MEMORY_LIMIT:-512M}
+        reservations:
+          memory: ${VERDACCIO_MEMORY_RESERVATION:-128M}
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  data:
+
+networks:
+  proxy:
+    name: ${NGINX_PROXY_NETWORK:-nginx_proxy}
+    external: true
+
